@@ -14,6 +14,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
+import java.awt.*;
 import java.io.File;
 import java.util.PriorityQueue;
 
@@ -26,6 +27,10 @@ public class TitleBar extends HBox{
 
     private final int maxHeight = 32;
     private IntegerProperty windowNumber = new SimpleIntegerProperty();
+    private boolean isPinned = false;
+
+    static Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
+    
     /**
      * constructor
      * can possible pass list of icons, etc in the future
@@ -34,6 +39,8 @@ public class TitleBar extends HBox{
         // set the window number
         windowNumber.set(WindowManager.numWindows + 1);
         WindowManager.numWindows += 1;
+
+
 
         makeDraggable(this); // make it draggable since undecorated can't be dragged
         setHeights();  // height of the title-bar
@@ -70,8 +77,14 @@ public class TitleBar extends HBox{
         getChildren().addAll(addButton, stickyButton, r1, xButton);
     }
 
-    private void updatePos(){
 
+    private void updatePos(){
+        if (isPinned){
+            // then we have to move it
+
+        }
+
+        // dont need to do anything if not pinned
     }
 
     public void setWindowNumber(int number){
@@ -99,10 +112,12 @@ public class TitleBar extends HBox{
 
         sButton.setOnAction((event -> {
             if (sButton.isSelected()){
+                isPinned = true;
                 ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(true);
             }
 
             else{
+                isPinned = false;
                 ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(false);
             }
         }));

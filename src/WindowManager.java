@@ -24,8 +24,9 @@ public class WindowManager {
 
         for (Notepad stage: allWindows) {
             // for each stage, decrease its number counter
-            if (s.myBar.getWindowNumber() > removed){
-                s.myBar.setWindowNumber(s.myBar.getWindowNumber() - 1);
+            System.out.println(stage.myBar.getWindowNumber());
+            if (stage.myBar.getWindowNumber() > removed){
+                stage.myBar.setWindowNumber(stage.myBar.getWindowNumber() - 1);
             }
         }
     }
