@@ -20,14 +20,5 @@ public class WindowManager {
     public static void destroyWindow(Notepad s){
         allWindows.remove(s);
         numWindows -= 1;
-        int removed = s.myBar.getWindowNumber();
-
-        for (Notepad stage: allWindows) {
-            // for each stage, decrease its number counter
-            System.out.println(stage.myBar.getWindowNumber());
-            if (stage.myBar.getWindowNumber() > removed){
-                stage.myBar.setWindowNumber(stage.myBar.getWindowNumber() - 1);
-            }
-        }
     }
 }

@@ -1,22 +1,11 @@
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Toggle;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 
-import java.awt.*;
-import java.io.File;
-import java.util.PriorityQueue;
+import java.util.List;
+
 
 /**
  * TitleBar.java
@@ -26,122 +15,27 @@ import java.util.PriorityQueue;
 public class TitleBar extends HBox{
 
     private final int maxHeight = 32;
-    private IntegerProperty windowNumber = new SimpleIntegerProperty();
-    private boolean isPinned = false;
 
-    static Dimension screensize = Toolkit.getDefaultToolkit().getScreenSize();
-    
+
     /**
      * constructor
      * can possible pass list of icons, etc in the future
      */
     public TitleBar(String color){
-        // set the window number
-        windowNumber.set(WindowManager.numWindows + 1);
-        WindowManager.numWindows += 1;
-
-
-
         makeDraggable(this); // make it draggable since undecorated can't be dragged
         setHeights();  // height of the title-bar
 
         // TODO: Move these styles to the css file as well
         styleBox(color); // styling the box
-
-        //-------------------------
-        // add css file
-        //-------------------------
-        File f = new File("CSS/titlebar.css");
-        getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
-
-        //--------------------------
-        // add listener to window count
-        //--------------------------
-        windowNumber.addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                updatePos();
-            }
-        });
-
-        //--------------------------
-        // adding buttons
-        //--------------------------
-        TitleButton xButton = createXButton();
-        ToggleButton stickyButton = createStickyButton();
-        TitleButton addButton = createAddButton();
-
-        Region r1 = new Region();
-        HBox.setHgrow(r1, Priority.ALWAYS);
-
-        getChildren().addAll(addButton, stickyButton, r1, xButton);
     }
 
-
-    private void updatePos(){
-        if (isPinned){
-            // then we have to move it
-
-        }
-
-        // dont need to do anything if not pinned
+    public void addNodes(List<Node> nodes){
+        getChildren().addAll(nodes);
     }
 
-    public void setWindowNumber(int number){
-        windowNumber.set(number);
+    public void addNode(Node node){
+        getChildren().add(node);
     }
-
-    public int getWindowNumber(){
-        return windowNumber.get();
-    }
-
-    private TitleButton createAddButton(){
-        TitleButton aButton = new TitleButton(maxHeight, maxHeight);
-        aButton.setBgText("+");
-
-        aButton.setOnAction((event ->{
-            WindowManager.spawnWindow();
-        }));
-
-        return aButton;
-    }
-
-    private ToggleButton createStickyButton(){
-        ToggleButton sButton = new ToggleButton("P");
-        sButton.setPrefSize(maxHeight, maxHeight);
-
-        sButton.setOnAction((event -> {
-            if (sButton.isSelected()){
-                isPinned = true;
-                ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(true);
-            }
-
-            else{
-                isPinned = false;
-                ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(false);
-            }
-        }));
-
-        return sButton;
-    }
-
-    /**
-     * addXButton
-     *
-     * adds the x button to the top right
-     */
-    private TitleButton createXButton(){
-        TitleButton xButton = new TitleButton(maxHeight, maxHeight);
-        xButton.setBgText("X");
-
-        xButton.setOnAction((event -> {
-            ((Stage)(((Button)event.getSource()).getScene().getWindow())).close();
-        }));
-
-        // return button
-        return xButton;
-    }
-
 
     /**
      * styleBox

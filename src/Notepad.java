@@ -1,34 +1,106 @@
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.Button;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.stage.WindowEvent;
 
+import java.io.File;
+
 public class Notepad {
 
-    public TitleBar myBar;
-    public Stage myStage;
+    private final int maxHeight = 32;
+
 
     public Notepad(){
-        Stage stage = new Stage();
+        Stage stage = new Stage();  // creating the stage
+        WindowManager.allWindows.add(this); // add this window to the manager
 
-        WindowManager.allWindows.add(this);
         BorderPane root = new BorderPane(); // borderpane, only need top and center
-        TitleBar bar = new TitleBar(" #336699;");    // title-bar
-        myBar = bar;
-        myStage = stage;
+        TitleBar bar = createBar();
         root.setTop(bar);
+        applyCSS(root);
 
-        stage.setOnHiding(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent event) {
-                System.out.println("closing");
-                WindowManager.destroyWindow(Notepad.this);
-            }
-        });
+
         stage.setScene(new Scene(root, 300, 250));
         stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
+    }
+
+
+    private TitleButton createAddButton(){
+        TitleButton aButton = new TitleButton(maxHeight, maxHeight);
+        aButton.setBgText("+");
+
+        aButton.setOnAction((event ->{
+            WindowManager.spawnWindow();
+        }));
+
+        return aButton;
+    }
+
+    private ToggleButton createStickyButton(){
+        ToggleButton sButton = new ToggleButton("P");
+        sButton.setPrefSize(maxHeight, maxHeight);
+
+        sButton.setOnAction((event -> {
+            if (sButton.isSelected()){
+                //isPinned = true;
+                ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(true);
+            }
+
+            else{
+                //isPinned = false;
+                ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(false);
+            }
+        }));
+
+        return sButton;
+    }
+
+    /**
+     * addXButton
+     *
+     * adds the x button to the top right
+     */
+    private TitleButton createXButton(){
+        TitleButton xButton = new TitleButton(maxHeight, maxHeight);
+        xButton.setBgText("X");
+
+        xButton.setOnAction((event -> {
+            ((Stage)(((Button)event.getSource()).getScene().getWindow())).close();
+        }));
+
+        // return button
+        return xButton;
+    }
+
+
+    private void applyCSS(Pane root){
+        //-------------------------
+        // add css file
+        //-------------------------
+        File f = new File("CSS/titlebar.css");
+        root.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+    }
+
+    private TitleBar createBar(){
+        TitleBar bar = new TitleBar(" #336699;");
+
+        TitleButton xButton = createXButton();
+        ToggleButton stickyButton = createStickyButton();
+        TitleButton addButton = createAddButton();
+
+        Region r1 = new Region();
+        HBox.setHgrow(r1, Priority.ALWAYS);
+
+        bar.addNode(addButton);
+        bar.addNode(stickyButton);
+        bar.addNode(r1);
+        bar.addNode(xButton);
+
+        return bar;
     }
 }
