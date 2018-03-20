@@ -13,6 +13,7 @@ public class TitleButton extends Button {
     public TitleButton(int width, int height){
         setFocusTraversable(false);
         setPrefSize(width, height);
+        setMaxSize(width, height);
     }
 
     public void setBgText(String text){

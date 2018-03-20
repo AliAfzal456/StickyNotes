@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class TitleBar extends HBox{
 
-    private final int maxHeight = 32;
+    static final int maxHeight = 32;
 
 
     /**
@@ -57,9 +57,9 @@ public class TitleBar extends HBox{
      * its put into its own method to make resizing easier
      */
     private void setHeights(){
-        setHeight(maxHeight);
-        setMaxHeight(maxHeight);
-        setPrefHeight(maxHeight);
+        setHeight(TitleBar.maxHeight);
+        setMaxHeight(TitleBar.maxHeight);
+        setPrefHeight(TitleBar.maxHeight);
     }
 
 

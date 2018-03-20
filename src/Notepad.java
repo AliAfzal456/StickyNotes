@@ -1,23 +1,21 @@
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import javafx.stage.Window;
-import javafx.stage.WindowEvent;
-
 import java.io.File;
 
 public class Notepad {
 
-    private final int maxHeight = 32;
     private int windowNumber;
+    boolean isPinned = false;
 
     public void setWindowNumber(int windowNumber){
         this.windowNumber = windowNumber;
@@ -34,19 +32,26 @@ public class Notepad {
     }
 
     public Notepad(){
+        // initial setup of stage and manager
         Stage stage = new Stage();  // creating the stage
         managerSetup(); // setup window manager information for this window
 
+        // root creation
         BorderPane root = new BorderPane(); // borderpane, only need top and center
+
+        // title bar creation
         TitleBar bar = createBar();
         root.setTop(bar);
+
+        // css application
         applyCSS(root);
 
 
-        //----
+        // body creation
         TextArea body = createTextArea();
         root.setCenter(body);
 
+        // root setting and stage showing
         stage.setScene(new Scene(root, 300, 250));
         stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
@@ -54,8 +59,10 @@ public class Notepad {
 
 
     private TitleButton createAddButton(){
-        TitleButton aButton = new TitleButton(maxHeight, maxHeight);
-        aButton.setBgText("+");
+        TitleButton aButton = new TitleButton(TitleBar.maxHeight, TitleBar.maxHeight);
+
+        Image image = new Image(getClass().getResourceAsStream("img/ic_add_button.png"));
+        aButton.setGraphic(new ImageView(image));
 
         aButton.setOnAction((event ->{
             WindowManager.spawnWindow();
@@ -65,17 +72,20 @@ public class Notepad {
     }
 
     private ToggleButton createStickyButton(){
-        ToggleButton sButton = new ToggleButton("P");
-        sButton.setPrefSize(maxHeight, maxHeight);
+        ToggleButton sButton = new ToggleButton();
+        sButton.setPrefSize(TitleBar.maxHeight, TitleBar.maxHeight);
+
+        Image image = new Image(getClass().getResourceAsStream("img/ic_pin_button.png"));
+        sButton.setGraphic(new ImageView(image));
 
         sButton.setOnAction((event -> {
             if (sButton.isSelected()){
-                //isPinned = true;
+                isPinned = true;
                 ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(true);
             }
 
             else{
-                //isPinned = false;
+                isPinned = false;
                 ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(false);
             }
         }));
@@ -89,10 +99,14 @@ public class Notepad {
      * adds the x button to the top right
      */
     private TitleButton createXButton(){
-        TitleButton xButton = new TitleButton(maxHeight, maxHeight);
-        xButton.setBgText("X");
+        TitleButton xButton = new TitleButton(TitleBar.maxHeight, TitleBar.maxHeight);
+
+
+        Image image = new Image(getClass().getResourceAsStream("img/ic_x_button.png"));
+        xButton.setGraphic(new ImageView(image));
 
         xButton.setOnAction((event -> {
+            WindowManager.destroyWindow(Notepad.this);
             ((Stage)(((Button)event.getSource()).getScene().getWindow())).close();
         }));
 
@@ -129,12 +143,19 @@ public class Notepad {
         root.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
     }
 
+    private TitleBar createGridButton(){
+        return null;
+    }
+
     private TitleBar createBar(){
         TitleBar bar = new TitleBar(" #336699;");
 
         TitleButton xButton = createXButton();
         ToggleButton stickyButton = createStickyButton();
         TitleButton addButton = createAddButton();
+
+        // experimental button: gridding windows
+
 
         Region r1 = new Region();
         HBox.setHgrow(r1, Priority.ALWAYS);
