@@ -1,0 +1,33 @@
+.button{
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+.button:hover{
+    -fx-background-color:rgba(0, 0, 0, 0.1);
+}
+
+.button:pressed{
+    -fx-background-color: rgba(0,0,0,0.5);
+}
+
+.toggle-button{
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-background-radius: 0;
+    -fx-background-color: transparent;
+}
+
+.toggle-button:hover{
+    -fx-background-color:rgba(0, 0, 0, 0.1);
+}
+
+.toggle-button:pressed{
+    -fx-background-color: rgba(0,0,0,0.5);
+}
+
+.toggle-button:selected{
+    -fx-background-color: rgba(0,0,0,0.3);
+}
