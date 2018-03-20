@@ -1,3 +1,7 @@
+import javafx.beans.property.IntegerProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -21,11 +25,16 @@ import java.util.PriorityQueue;
 public class TitleBar extends HBox{
 
     private final int maxHeight = 32;
+    private IntegerProperty windowNumber = new SimpleIntegerProperty();
     /**
      * constructor
      * can possible pass list of icons, etc in the future
      */
     public TitleBar(String color){
+        // set the window number
+        windowNumber.set(WindowManager.numWindows + 1);
+        WindowManager.numWindows += 1;
+
         makeDraggable(this); // make it draggable since undecorated can't be dragged
         setHeights();  // height of the title-bar
 
@@ -37,6 +46,16 @@ public class TitleBar extends HBox{
         //-------------------------
         File f = new File("CSS/titlebar.css");
         getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+
+        //--------------------------
+        // add listener to window count
+        //--------------------------
+        windowNumber.addListener(new ChangeListener<Number>() {
+            @Override
+            public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+                updatePos();
+            }
+        });
 
         //--------------------------
         // adding buttons
@@ -51,9 +70,25 @@ public class TitleBar extends HBox{
         getChildren().addAll(addButton, stickyButton, r1, xButton);
     }
 
+    private void updatePos(){
+
+    }
+
+    public void setWindowNumber(int number){
+        windowNumber.set(number);
+    }
+
+    public int getWindowNumber(){
+        return windowNumber.get();
+    }
+
     private TitleButton createAddButton(){
         TitleButton aButton = new TitleButton(maxHeight, maxHeight);
         aButton.setBgText("+");
+
+        aButton.setOnAction((event ->{
+            WindowManager.spawnWindow();
+        }));
 
         return aButton;
     }
@@ -61,6 +96,16 @@ public class TitleBar extends HBox{
     private ToggleButton createStickyButton(){
         ToggleButton sButton = new ToggleButton("P");
         sButton.setPrefSize(maxHeight, maxHeight);
+
+        sButton.setOnAction((event -> {
+            if (sButton.isSelected()){
+                ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(true);
+            }
+
+            else{
+                ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(false);
+            }
+        }));
 
         return sButton;
     }
