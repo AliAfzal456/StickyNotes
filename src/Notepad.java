@@ -1,10 +1,12 @@
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 import java.io.File;
@@ -12,17 +14,36 @@ import java.io.File;
 public class Notepad {
 
     private final int maxHeight = 32;
+    private int windowNumber;
 
+    public void setWindowNumber(int windowNumber){
+        this.windowNumber = windowNumber;
+    }
+
+    public int getWindowNumber(){
+        return windowNumber;
+    }
+
+    public void managerSetup(){
+        WindowManager.allWindows.add(this);
+        WindowManager.numWindows += 1;
+        setWindowNumber(WindowManager.numWindows);
+    }
 
     public Notepad(){
         Stage stage = new Stage();  // creating the stage
-        WindowManager.allWindows.add(this); // add this window to the manager
+        managerSetup(); // setup window manager information for this window
 
         BorderPane root = new BorderPane(); // borderpane, only need top and center
         TitleBar bar = createBar();
         root.setTop(bar);
         applyCSS(root);
 
+
+        //----
+        TextArea body = new TextArea();
+        body.setWrapText(true);
+        root.setCenter(body);
 
         stage.setScene(new Scene(root, 300, 250));
         stage.initStyle(StageStyle.UNDECORATED);

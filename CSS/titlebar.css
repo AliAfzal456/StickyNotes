@@ -31,3 +31,23 @@
 .toggle-button:selected{
     -fx-background-color: rgba(0,0,0,0.3);
 }
+
+
+.text-area {
+    -fx-background-color: transparent;
+    -fx-font-size: 14;
+    -fx-text-fill: black;
+}
+
+.text-area .scroll-pane {
+    -fx-background-color: transparent;
+}
+
+.text-area .scroll-pane .viewport{
+    -fx-background-color: transparent;
+}
+
+
+.text-area .scroll-pane .content{
+    -fx-background-color: transparent;
+}
