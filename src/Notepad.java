@@ -1,6 +1,9 @@
+import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.*;
@@ -41,8 +44,7 @@ public class Notepad {
 
 
         //----
-        TextArea body = new TextArea();
-        body.setWrapText(true);
+        TextArea body = createTextArea();
         root.setCenter(body);
 
         stage.setScene(new Scene(root, 300, 250));
@@ -96,6 +98,26 @@ public class Notepad {
 
         // return button
         return xButton;
+    }
+
+    private TextArea createTextArea(){
+        // credit to https://stackoverflow.com/questions/23728517/blurred-text-in-javafx-textarea for fixing blurry text
+        TextArea body = new TextArea();
+        body.setCache(false);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                body.requestFocus();
+                ScrollPane sp = (ScrollPane)body.getChildrenUnmodifiable().get(0);
+                sp.setCache(false);
+                for (Node n : sp.getChildrenUnmodifiable()) {
+                    n.setCache(false);
+                }
+            }
+        });
+        body.setWrapText(true);
+
+        return body;
     }
 
 
