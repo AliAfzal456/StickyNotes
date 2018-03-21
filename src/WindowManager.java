@@ -25,17 +25,17 @@ public class WindowManager {
     }
 
     public static void gridWindows(){
-        int stageW = Notepad.stageW;
-        int stageH = Notepad.stageH;
+        int stageW = Constants.stageW;
+        int stageH = Constants.stageH;
 
         // find out how many windows can fit in a column.
         // get height of window/stageH
         // then find out how many columns you can have
         // get width of window/stageW
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
 
-        int numInCol = (int)primaryScreenBounds.getHeight()/stageH;
-        int numCols = (int)primaryScreenBounds.getWidth()/stageW;
+
+        int numInCol = (int)Constants.primaryScreenBounds.getHeight()/stageH;
+        int numCols = (int)Constants.primaryScreenBounds.getWidth()/stageW;
 
         int iC = 0;
 
@@ -44,8 +44,8 @@ public class WindowManager {
 
             if (p.getIsPinned()){
                 p.setStageLocation(
-                        primaryScreenBounds.getWidth() - (((iC/numInCol)+1)*stageW),
-                        (iC)*stageH
+                        Constants.primaryScreenBounds.getWidth() - (((iC/numInCol)+1)*stageW + (iC/numInCol)*1),
+                        (iC%numInCol)*stageH
                 );
                 iC++;
             }

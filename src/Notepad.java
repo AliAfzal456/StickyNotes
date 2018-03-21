@@ -12,16 +12,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import java.io.File;
 
 public class Notepad {
 
     private int windowNumber;
-    static int stageW = 300;
-    static int stageH = 250;
-    boolean isPinned = false;
-
+    private boolean isPinned = false;
     private Stage s;
+    private boolean isGridded = false;
 
     public void setWindowNumber(int windowNumber){
         this.windowNumber = windowNumber;
@@ -58,12 +55,19 @@ public class Notepad {
         TextArea body = createTextArea();
         root.setCenter(body);
 
+        // add a position listener to the stage
+        addPositionListener(stage);
+
         // root setting and stage showing
-        stage.setScene(new Scene(root, Notepad.stageW, Notepad.stageH));
+        stage.setScene(new Scene(root, Constants.stageW, Constants.stageH));
         stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
+    private void addPositionListener(Stage stage){
+        stage.xProperty().addListener((obs, oldVal, newVal) -> onMove());
+        stage.yProperty().addListener((obs, oldVal, newVal) -> onMove());
+    }
 
     private TitleButton createAddButton(){
         TitleButton aButton = new TitleButton(TitleBar.maxHeight, TitleBar.maxHeight);
@@ -87,6 +91,25 @@ public class Notepad {
         return isPinned;
     }
 
+    private void onMove(){
+        //isGridded = false;
+        if (isGridded && isPinned){
+            WindowManager.gridWindows();
+            isGridded = false;
+        }
+    }
+
+    private void onUnpin(){
+        isPinned = false;
+        if (isGridded){
+            WindowManager.gridWindows();
+            setStageLocation(
+                    Constants.primaryScreenBounds.getMinX() + (Constants.primaryScreenBounds.getWidth() - Constants.stageW) * 0.5,
+                    Constants.primaryScreenBounds.getMinY() + (Constants.primaryScreenBounds.getHeight() - Constants.stageH) *0.5);
+        }
+        isGridded = false;
+    }
+
     private ToggleButton createStickyButton(){
         ToggleButton sButton = new ToggleButton();
         sButton.setPrefSize(TitleBar.maxHeight, TitleBar.maxHeight);
@@ -101,8 +124,7 @@ public class Notepad {
             }
 
             else{
-                isPinned = false;
-
+                onUnpin();
                 ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(false);
             }
         }));
@@ -124,6 +146,7 @@ public class Notepad {
 
         xButton.setOnAction((event -> {
             WindowManager.destroyWindow(Notepad.this);
+            onUnpin();
             ((Stage)(((Button)event.getSource()).getScene().getWindow())).close();
         }));
 
@@ -171,6 +194,7 @@ public class Notepad {
         gButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                isGridded = true;
                 WindowManager.gridWindows();
             }
         });
