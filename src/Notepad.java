@@ -156,8 +156,8 @@ public class Notepad {
         //-------------------------
         // add css file
         //-------------------------
-        File f = new File("CSS/titlebar.css");
-        root.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
+        String css = this.getClass().getResource("CSS/titlebar.css").toExternalForm();
+        root.getStylesheets().add(css);
     }
 
     private TitleButton createGridButton(){
