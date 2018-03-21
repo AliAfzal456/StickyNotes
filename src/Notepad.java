@@ -93,10 +93,10 @@ public class Notepad {
 
     private void onMove(){
         //isGridded = false;
-        if (isGridded && isPinned){
-            WindowManager.gridWindows();
-            isGridded = false;
-        }
+//        if (isGridded && isPinned){
+//            WindowManager.gridWindows();
+//            isGridded = false;
+//        }
     }
 
     private void onUnpin(){
