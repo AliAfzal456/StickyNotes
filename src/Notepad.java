@@ -1,4 +1,6 @@
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -15,7 +17,11 @@ import java.io.File;
 public class Notepad {
 
     private int windowNumber;
+    static int stageW = 300;
+    static int stageH = 250;
     boolean isPinned = false;
+
+    private Stage s;
 
     public void setWindowNumber(int windowNumber){
         this.windowNumber = windowNumber;
@@ -34,6 +40,7 @@ public class Notepad {
     public Notepad(){
         // initial setup of stage and manager
         Stage stage = new Stage();  // creating the stage
+        s = stage;
         managerSetup(); // setup window manager information for this window
 
         // root creation
@@ -52,7 +59,7 @@ public class Notepad {
         root.setCenter(body);
 
         // root setting and stage showing
-        stage.setScene(new Scene(root, 300, 250));
+        stage.setScene(new Scene(root, Notepad.stageW, Notepad.stageH));
         stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
@@ -71,6 +78,15 @@ public class Notepad {
         return aButton;
     }
 
+    public void setStageLocation(double x, double y) {
+        s.setX(x);
+        s.setY(y);
+    }
+
+    public boolean getIsPinned(){
+        return isPinned;
+    }
+
     private ToggleButton createStickyButton(){
         ToggleButton sButton = new ToggleButton();
         sButton.setPrefSize(TitleBar.maxHeight, TitleBar.maxHeight);
@@ -86,6 +102,7 @@ public class Notepad {
 
             else{
                 isPinned = false;
+
                 ((Stage)(((ToggleButton)event.getSource()).getScene().getWindow())).setAlwaysOnTop(false);
             }
         }));
@@ -143,8 +160,22 @@ public class Notepad {
         root.getStylesheets().add("file:///" + f.getAbsolutePath().replace("\\", "/"));
     }
 
-    private TitleBar createGridButton(){
-        return null;
+    private TitleButton createGridButton(){
+        TitleButton gButton = new TitleButton(TitleBar.maxHeight, TitleBar.maxHeight);
+
+
+        Image image = new Image(getClass().getResourceAsStream("img/ic_grid_button.png"));
+        gButton.setGraphic(new ImageView(image));
+
+
+        gButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                WindowManager.gridWindows();
+            }
+        });
+
+        return gButton;
     }
 
     private TitleBar createBar(){
@@ -155,13 +186,14 @@ public class Notepad {
         TitleButton addButton = createAddButton();
 
         // experimental button: gridding windows
-
+        TitleButton gridButton = createGridButton();
 
         Region r1 = new Region();
         HBox.setHgrow(r1, Priority.ALWAYS);
 
         bar.addNode(addButton);
         bar.addNode(stickyButton);
+        bar.addNode(gridButton);
         bar.addNode(r1);
         bar.addNode(xButton);
 
